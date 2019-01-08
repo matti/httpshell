@@ -8,7 +8,7 @@ s.set :port, (ENV["PORT"] || "8080")
 
 $__pwd = Dir.pwd
 s.get "/" do
-  erb :index, locals: { output: "", pwd: $__pwd }
+  erb :index, locals: { stdout: "", stderr: "", timed_out: false, pwd: $__pwd }
 end
 
 s.post "/kill" do
@@ -20,31 +20,38 @@ exec_handler = lambda do
   input = params[:input]
   timeout = (params[:timeout]).to_i
   input = ":" if input.nil? || input.empty?
-  output = nil
-
+  stdout = nil
+  stderr = nil
+  timed_out = false
   begin
     exitstatus = nil
     success = false
     Timeout::timeout(timeout) do
-      output = `cd "#{$__pwd}"; #{input} && pwd || exit 1`
+      stdout = `cd "#{$__pwd}"; 2> .httpshell_stderr #{input} && pwd || exit 1`
       exitstatus = $?.exitstatus
       success = $?.success?
     end
 
-    output = if success
-      output_lines = output.split("\n")
-      $__pwd = output_lines.pop
-      output_lines.join "\n"
+    stdout = if success
+      stdout_lines = stdout.split("\n")
+      $__pwd = stdout_lines.pop
+      stdout_lines.join "\n"
     else
-      "exit: #{exitstatus}"
+      stdout
     end
   rescue Timeout::Error
-    output = "!!! timeout after #{timeout}s"
+    timed_out = true
   rescue => exception
-    output = exception.to_s
+    p exception
+    stdout = exception.to_s
+  ensure
+    if File.exist? ".httpshell_stderr"
+      stderr = File.read ".httpshell_stderr"
+      File.unlink ".httpshell_stderr"
+    end
   end
 
-  erb :index, locals: { output: output, pwd: $__pwd }
+  erb :index, locals: { stdout: stdout, stderr: stderr, timed_out: timed_out, pwd: $__pwd }
 end
 
 s.post "/exec", &exec_handler

@@ -7,14 +7,25 @@
 <form method="POST" action="/exec">
   <pre><%= pwd %><br></pre>
   <input name="input" size=120 autofocus>
-  timeout: <input name="timeout" value=1 size=3>
+  timedout: <input name="timeout" value=1 size=3>
   <input type="submit" value="run">
 </form>
 <form method="POST" action="/kill">
   <input type="submit" value="restart">
 </form>
 <hr style="clear: both;">
-<pre>
+timed out: <%= timed_out %>
 
-<%= output %>
+<fieldset>
+<legend>stdout</legend>
+<pre>
+<%= stdout %>
 </pre>
+</fieldset>
+
+<fieldset legend="stderr">
+<legend>stderr</legend>
+<pre>
+<%= stderr %>
+</pre>
+</fieldset>
