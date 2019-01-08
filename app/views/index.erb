@@ -1,0 +1,20 @@
+<style>
+  pre {
+    color: white;
+    background: black
+  }
+</style>
+<form method="POST" action="/exec">
+  <pre><%= pwd %><br></pre>
+  <input name="input" size=120 autofocus>
+  timeout: <input name="timeout" value=1 size=3>
+  <input type="submit" value="run">
+</form>
+<form method="POST" action="/kill">
+  <input type="submit" value="restart">
+</form>
+<hr style="clear: both;">
+<pre>
+
+<%= output %>
+</pre>
