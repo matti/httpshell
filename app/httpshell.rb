@@ -51,7 +51,7 @@ exec_handler = lambda do
     end
   end
 
-  erb :index, locals: { stdout: stdout, stderr: stderr, timed_out: timed_out, exitstatus, exitstatus, pwd: $__pwd }
+  erb :index, locals: { stdout: stdout, stderr: stderr, timed_out: timed_out, exitstatus: exitstatus, pwd: $__pwd }
 end
 
 s.post "/exec", &exec_handler
