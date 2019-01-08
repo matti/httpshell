@@ -7,7 +7,7 @@
 <form method="POST" action="/exec">
   <pre><%= pwd %><br></pre>
   <input name="input" size=120 autofocus>
-  timedout: <input name="timeout" value=1 size=3>
+  timeout: <input name="timeout" value=1 size=3>
   <input type="submit" value="run">
 </form>
 <form method="POST" action="/kill">
@@ -15,6 +15,7 @@
 </form>
 <hr style="clear: both;">
 timed out: <%= timed_out %>
+exitstatus: <%= exitstatus %>
 
 <fieldset>
 <legend>stdout</legend>

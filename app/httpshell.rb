@@ -8,7 +8,7 @@ s.set :port, (ENV["PORT"] || "8080")
 
 $__pwd = Dir.pwd
 s.get "/" do
-  erb :index, locals: { stdout: "", stderr: "", timed_out: false, pwd: $__pwd }
+  erb :index, locals: { stdout: "", stderr: "", timed_out: false, exitstatus: -1, pwd: $__pwd }
 end
 
 s.post "/kill" do
@@ -23,8 +23,8 @@ exec_handler = lambda do
   stdout = nil
   stderr = nil
   timed_out = false
+  exitstatus = nil
   begin
-    exitstatus = nil
     success = false
     Timeout::timeout(timeout) do
       stdout = `cd "#{$__pwd}"; 2> .httpshell_stderr #{input} && pwd || exit 1`
@@ -51,7 +51,7 @@ exec_handler = lambda do
     end
   end
 
-  erb :index, locals: { stdout: stdout, stderr: stderr, timed_out: timed_out, pwd: $__pwd }
+  erb :index, locals: { stdout: stdout, stderr: stderr, timed_out: timed_out, exitstatus, exitstatus, pwd: $__pwd }
 end
 
 s.post "/exec", &exec_handler
